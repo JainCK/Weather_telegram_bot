@@ -7,11 +7,12 @@ const scheduleWeatherUpdates = () => {
   schedule.scheduleJob("0 * * * *", async () => {
     const users = await User.find({ subscribed: true });
     for (const user of users) {
-      const weatherData = await fetchWeather(user.location, user.preferences);
-      if (weatherData) {
+      const weather = await fetchWeather(user.location, user.preferences);
+      if (weather) {
+        const { description, temp } = weather;
         bot.telegram.sendMessage(
           user.telegramId,
-          `Current weather:\nTemperature: ${weatherData.temp}°C\nDescription: ${weatherData.description}`
+          `Scheduled Weather Update:\n${description}, ${temp}°C`
         );
       }
     }
